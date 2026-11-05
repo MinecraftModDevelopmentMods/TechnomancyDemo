@@ -16,7 +16,7 @@ Try running only the Aether Converter first. The Aether Lamp can now spend its c
 Use `/skysleylines account` near the machines or the operator Ley Meter in Sky’s Ley Lines 0.5 to inspect raw magic and both currency balances. Conversion follows the saved rate for each currency.
 ## Build and run
 
-Use JDK 21 and the included Gradle wrapper. Download [Sky’s Ley Lines 0.5.4.121012 for NeoForge 1.21.1](https://edge.forgecdn.net/files/9453/30/SkysLeyLines-0.5.4.121012.jar) and put it in `libs/` in this checkout. The build expects `libs/SkysLeyLines-0.5.4.121012.jar` by default. On Linux or macOS, run `./gradlew` in place of `.\gradlew.bat`.
+Use JDK 21 and the included Gradle wrapper. Gradle downloads Sky’s Ley Lines 0.5.4.121012 from MMD Maven for compilation and development runs. On Linux or macOS, run `./gradlew` in place of `.\gradlew.bat`.
 
 ```powershell
 .\gradlew.bat build
@@ -24,9 +24,9 @@ Use JDK 21 and the included Gradle wrapper. Download [Sky’s Ley Lines 0.5.4.12
 .\gradlew.bat runClient
 ```
 
-If your copy of Sky’s Ley Lines is somewhere else, pass its path with `-PleyLinesJar=/path/to/SkysLeyLines.jar`. For Eclipse, import this folder as an existing Gradle project using the wrapper and JDK 21. Use the default `libs` location or set `leyLinesJar` in your Gradle user properties so Buildship can find it. The build produces separate player and sources JARs in `build/libs`. The player JAR declares Sky’s Ley Lines as a required mod and expects it to be installed separately.
+For Eclipse, import this folder as an existing Gradle project using the wrapper and JDK 21. To test a different local Ley Lines build, pass `-PleyLinesJar=/path/to/SkysLeyLines.jar` or set `leyLinesJar` in your Gradle user properties. The build produces separate player and sources JARs in `build/libs`. Install Sky’s Ley Lines alongside the demo when playing outside the development workspace.
 
-The Gradle client and server tasks stage the configured dependency as skysleylines-dev.jar in their respective dev run's mods folder. Use one copy of Sky's Ley Lines per run.
+The Gradle client and server tasks stage the dependency as `skysleylines-dev.jar` in each run’s `mods` folder. Use one copy of Sky’s Ley Lines per run.
 
 After changing Eclipse's Gradle user home, refresh the Gradle project and run the Gradle task again. The build regenerates its launch classpaths from the selected cache.
 
