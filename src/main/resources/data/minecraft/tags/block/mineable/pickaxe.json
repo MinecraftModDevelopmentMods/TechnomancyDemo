@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "technomancy_demo:aether_converter",
+    "technomancy_demo:aether_lamp",
+    "technomancy_demo:electric_converter",
+    "technomancy_demo:electric_lamp"
+  ]
+}

@@ -1,0 +1,7 @@
+* text=auto eol=lf
+gradlew.bat text eol=crlf
+*.jar binary
+
+# These files are copied into the mod JAR. Preserve the tested bytes on checkout.
+LICENSE -text whitespace=trailing-space,space-before-tab,cr-at-eol
+src/main/resources/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

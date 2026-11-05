@@ -1,0 +1,104 @@
+import groovy.json.JsonSlurper
+import java.security.MessageDigest
+import net.neoforged.gradle.common.runtime.tasks.DownloadAssets
+import net.neoforged.gradle.userdev.runtime.tasks.ClasspathSerializer
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'net.neoforged.gradle.userdev' version '7.1.38'
+}
+
+gradle.sharedServices.registrations.named('CachedExecutionService') {
+    parameters.cacheDirectory.set(layout.projectDirectory.dir('.gradle/neo-execution').asFile.absolutePath)
+}
+version = mod_version
+group = 'zone.moddev.mc.technomancydemo'
+base.archivesName = 'TechnomancyDemo'
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+repositories { mavenCentral() }
+
+def leyLinesJar = providers.gradleProperty('leyLinesJar')
+        .map { file(it) }
+        .orElse(file('libs/SkysLeyLines-0.5.4.121012.jar'))
+
+if (!leyLinesJar.get().isFile()) {
+    throw new GradleException("Missing Sky's Ley Lines jar at " + leyLinesJar.get()
+            + ". See README.md or set -PleyLinesJar=/path/to/SkysLeyLines.jar.")
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+    compileOnly files(leyLinesJar)
+}
+
+runs {
+    configureEach {
+        workingDirectory layout.projectDirectory.dir('run').dir(name)
+        modSource sourceSets.main
+    }
+    client {
+        def glfwLibrary = providers.gradleProperty('glfwLibrary')
+        if (glfwLibrary.isPresent()) {
+            systemProperty 'org.lwjgl.glfw.libname', file(glfwLibrary.get()).absolutePath
+        }
+    }
+    server { argument '--nogui' }
+}
+
+// A standalone mod JAR must be discoverable as a mod in the development runtime.
+['client', 'server'].each { runName ->
+    def suffix = runName.capitalize()
+    def stage = tasks.register("stageLeyLinesFor$suffix", Copy) {
+        from leyLinesJar
+        into layout.projectDirectory.dir("run/$runName/mods")
+        rename { 'skysleylines-dev.jar' }
+    }
+    tasks.configureEach {
+        if (name == "run$suffix" || name == "ideBeforeRun$suffix") dependsOn stage
+    }
+}
+
+// NeoGradle serializes absolute JAR paths but its built-in input ignores file locations.
+tasks.withType(ClasspathSerializer).configureEach { serializer ->
+    serializer.inputs.files(serializer.inputFiles)
+            .withPropertyName('absoluteLaunchClasspath')
+            .withPathSensitivity(PathSensitivity.ABSOLUTE)
+}
+
+// A NeoGradle asset cache miss can clear the shared objects directory before downloading.
+tasks.withType(DownloadAssets).configureEach { download ->
+    onlyIf('the selected Minecraft assets are missing or incomplete') {
+        def index = download.assetIndexFile.get().asFile
+        def expectedHash = download.versionJson.get().assetIndex.sha1
+        if (!index.isFile() || !MessageDigest.getInstance('SHA-1').digest(index.bytes)
+                .encodeHex().toString().equalsIgnoreCase(expectedHash)) return true
+
+        def objects = new File(index.parentFile.parentFile, 'objects')
+        def assets = new JsonSlurper().parse(index).objects.values()
+        !assets.every { asset ->
+            def object = new File(objects, asset.hash.substring(0, 2) + '/' + asset.hash)
+            object.isFile() && object.length() == asset.size
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.named('processResources', ProcessResources) {
+    def tokens = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version, ley_version_range: ley_version_range]
+    inputs.properties tokens
+    filesMatching('META-INF/neoforge.mods.toml') { expand tokens }
+    from('LICENSE')
+}
+
+apply from: 'eclipse.gradle'

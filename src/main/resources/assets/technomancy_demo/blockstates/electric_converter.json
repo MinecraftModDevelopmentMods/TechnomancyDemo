@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "technomancy_demo:block/electric_converter"
+    }
+  }
+}

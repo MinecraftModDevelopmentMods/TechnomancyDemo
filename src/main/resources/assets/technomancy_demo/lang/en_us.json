@@ -1,0 +1,23 @@
+{
+  "message.technomancy_demo.converted": "Converted %s raw into %s %s. Nexus balance: %s.",
+  "message.technomancy_demo.lamp_lit": "Spent %s %s. Nexus balance: %s.",
+  "message.technomancy_demo.lamp_busy": "The lamp is still finishing its last pulse.",
+  "message.technomancy_demo.failure.no_nexus": "This machine needs to be within a nexus field.",
+  "message.technomancy_demo.failure.insufficient_raw": "This nexus has less than 5 raw magic available.",
+  "message.technomancy_demo.failure.insufficient_currency": "This nexus has less than %2$s %1$s available.",
+  "message.technomancy_demo.failure.invalid_amount": "The machine's requested amount is invalid.",
+  "message.technomancy_demo.failure.unknown_currency": "This world has no registered rate for %s.",
+  "message.technomancy_demo.failure.inactive_currency": "The %s currency is inactive in this world.",
+  "message.technomancy_demo.failure.non_integral_output": "The saved rate cannot convert %2$s raw into whole %1$s units.",
+  "message.technomancy_demo.failure.overflow": "This conversion would overflow the nexus balance of %s.",
+  "message.technomancy_demo.failure.cancelled": "A nexus protection rule blocked this operation.",
+  "message.technomancy_demo.failure.reentrant": "This nexus is processing another operation.",
+  "message.technomancy_demo.failure.check_failed": "The nexus could not validate this operation.",
+  "block.technomancy_demo.aether_converter": "Aether Converter",
+  "block.technomancy_demo.aether_lamp": "Aether Lamp",
+  "itemGroup.technomancy_demo.machines": "Technomancy Demo",
+  "currency.technomancy_demo.aether": "aether",
+  "currency.technomancy_demo.electric": "electric",
+  "block.technomancy_demo.electric_converter": "Electric Converter",
+  "block.technomancy_demo.electric_lamp": "Electric Lamp"
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "technomancy_demo:block/aether_lamp"
+    },
+    "lit=true": {
+      "model": "technomancy_demo:block/aether_lamp_lit"
+    }
+  }
+}
