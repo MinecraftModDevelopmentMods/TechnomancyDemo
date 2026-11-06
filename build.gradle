@@ -21,20 +21,36 @@ java {
     withSourcesJar()
 }
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    maven {
+        name = 'MMD'
+        url = 'https://maven.moddev.zone/releases/'
+        content { includeModule 'zone.moddev.mc.skysleylines', 'SkysLeyLines' }
+    }
+}
 
-def leyLinesJar = providers.gradleProperty('leyLinesJar')
-        .map { file(it) }
-        .orElse(file('libs/SkysLeyLines-0.5.4.121012.jar'))
+configurations {
+    leyLinesMod {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    compileOnly.extendsFrom(leyLinesMod)
+}
 
-if (!leyLinesJar.get().isFile()) {
-    throw new GradleException("Missing Sky's Ley Lines jar at " + leyLinesJar.get()
-            + ". See README.md or set -PleyLinesJar=/path/to/SkysLeyLines.jar.")
+def localLeyLinesJar = providers.gradleProperty('leyLinesJar').map { file(it) }
+if (localLeyLinesJar.isPresent() && !localLeyLinesJar.get().isFile()) {
+    throw new GradleException("Missing Sky's Ley Lines override JAR at " + localLeyLinesJar.get())
 }
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
-    compileOnly files(leyLinesJar)
+    if (localLeyLinesJar.isPresent()) {
+        leyLinesMod files(localLeyLinesJar)
+    } else {
+        leyLinesMod "zone.moddev.mc.skysleylines:SkysLeyLines:${ley_version}"
+    }
 }
 
 runs {
@@ -55,7 +71,7 @@ runs {
 ['client', 'server'].each { runName ->
     def suffix = runName.capitalize()
     def stage = tasks.register("stageLeyLinesFor$suffix", Copy) {
-        from leyLinesJar
+        from configurations.leyLinesMod
         into layout.projectDirectory.dir("run/$runName/mods")
         rename { 'skysleylines-dev.jar' }
     }
