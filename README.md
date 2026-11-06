@@ -16,7 +16,7 @@ Try running only the Aether Converter first. The Aether Lamp can now spend its c
 Use `/skysleylines account` near the machines or the operator Ley Meter in Sky’s Ley Lines 0.5 to inspect raw magic and both currency balances. Conversion follows the saved rate for each currency.
 ## Build and run
 
-Use JDK 21 and the included Gradle wrapper. Gradle downloads Sky’s Ley Lines 0.5.4.121012 from MMD Maven for compilation and development runs. On Linux or macOS, run `./gradlew` in place of `.\gradlew.bat`.
+Use JDK 21 and the included Gradle wrapper. Gradle downloads Sky’s Ley Lines 0.5.5.121012 from MMD Maven for compilation and development runs. On Linux or macOS, run `./gradlew` in place of `.\gradlew.bat`.
 
 ```powershell
 .\gradlew.bat build
